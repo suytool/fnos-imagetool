@@ -15,8 +15,8 @@
 ## 安装
 
 1. 到 [Releases](https://github.com/suytool/fnos-imagetool/releases) 下载对应架构的安装包：
-   - `图片工具-0.0.2-x86_64.fpk` — Intel / AMD 平台
-   - `图片工具-0.0.2-arm64.fpk` — ARM 平台（鲲鹏 / 飞腾 / 树莓派等）
+   - `imagetool-0.0.2-x86_64.fpk` — Intel / AMD 平台
+   - `imagetool-0.0.2-arm64.fpk` — ARM 平台（鲲鹏 / 飞腾 / 树莓派等）
 2. 飞牛应用中心 → 手动安装 → 上传 .fpk → 确认（第三方应用提示）→ 桌面出现「图片工具」图标。
 3. 点击图标在浏览器打开，端口 3434。
 
