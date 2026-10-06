@@ -1,0 +1,14 @@
+appname               = com.imagetool.app
+version               = 0.0.2
+display_name          = 图片工具
+desc                  = 轻量图片处理工具：支持拼图（经典九宫格/2~9图模板/自由拼图 7×7）、分图（1拆9/1拆6/1拆4/自由分图 10×10）、文字与图片水印、缩放旋转裁剪滤镜等图片修改。全部图片在本地 NAS 处理，不上传任何外部服务器。
+platform              = x86
+source                = thirdparty
+maintainer            = suytool
+distributor           = suytool
+service_port          = 3434
+checkport             = true
+os_min_version        = 0.9.0
+desktop_uidir         = ui
+desktop_applaunchname = com.imagetool.app.Application
+ctl_stop              = true

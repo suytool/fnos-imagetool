@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图片工具</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">图</span>
+    <span>图片工具</span>
+  </div>
+  <nav class="nav-tabs">
+    <button data-tab="watermark">添加水印</button>
+    <button data-tab="edit">图片修改</button>
+    <button data-tab="collage" class="active">拼图拆分</button>
+    <button data-tab="about">关于应用</button>
+  </nav>
+  <div class="topbar-right">
+    <button class="btn support-btn" id="support-btn">❤ 支持作者</button>
+  </div>
+</header>
+
+<!-- 支持作者弹窗 -->
+<div class="modal-mask" id="support-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-head">
+      <span>支持作者</span>
+      <button class="modal-close" id="support-close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="qr-item">
+        <img src="alipay.png" alt="支付宝赞赏码">
+        <div class="qr-label">支付宝 · 扫码支持</div>
+      </div>
+      <div class="qr-item">
+        <img src="wechat.png" alt="微信赞赏码">
+        <div class="qr-label">微信 · 扫码支持</div>
+      </div>
+    </div>
+    <div class="modal-tip">您的支持是作者持续更新的最大动力，感谢！</div>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- ===================== 添加水印 ===================== -->
+  <section id="page-watermark" class="page">
+    <div class="two-col">
+      <div class="panel">
+        <div class="section-title">1. 选择原图</div>
+        <div class="upload-zone" id="wm-upload">
+          <div class="up-icon">🖼️</div>
+          <div class="up-main">点击上传图片</div>
+          <div class="up-sub">或拖拽图片到此处</div>
+        </div>
+        <input type="file" id="wm-file" accept="image/*" hidden>
+
+        <div class="section-title" style="margin-top:16px">2. 文字水印</div>
+        <div class="form-group">
+          <label>水印文字</label>
+          <input type="text" id="wm-text" placeholder="例如：© 我的版权">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>字号 (px)</label>
+            <input type="number" id="wm-fontsize" value="48" min="8" max="400">
+          </div>
+          <div class="form-group">
+            <label>颜色</label>
+            <input type="color" id="wm-color" value="#ffffff">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>不透明度 <span class="range-val" id="wm-op-val">100%</span></label>
+            <input type="range" id="wm-opacity" min="0" max="100" value="100">
+          </div>
+          <div class="form-group">
+            <label>旋转角度</label>
+            <input type="number" id="wm-rotation" value="0" min="0" max="360">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>位置</label>
+          <select id="wm-position">
+            <option value="tl">左上角</option>
+            <option value="tr">右上角</option>
+            <option value="bl">左下角</option>
+            <option value="br" selected>右下角</option>
+            <option value="center">居中</option>
+            <option value="tiled">平铺</option>
+          </select>
+        </div>
+
+        <div class="section-title" style="margin-top:16px">3. 图片水印（可选）</div>
+        <div class="form-group">
+          <label>Logo 图片</label>
+          <input type="file" id="wm-logo" accept="image/*">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Logo 宽度 (px)</label>
+            <input type="number" id="wm-logosize" value="200" min="20" max="2000">
+          </div>
+          <div class="form-group">
+            <label>Logo 不透明度</label>
+            <input type="number" id="wm-logoopacity" value="100" min="0" max="100">
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button class="btn primary" id="wm-run">生成水印图片</button>
+          <button class="btn" id="wm-download" style="display:none">下载</button>
+        </div>
+        <div class="error-msg" id="wm-error"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">预览</div>
+        <div class="result-box show" id="wm-result">
+          <div class="loading" id="wm-loading" style="display:none">
+            <div class="spinner"></div>
+            正在处理图片...
+          </div>
+          <img id="wm-result-img" alt="水印预览" style="display:none">
+          <div class="canvas-hint" id="wm-empty-hint">
+            <div class="hint-main">上传图片并设置水印参数，点击「生成水印图片」</div>
+            <div class="hint-sub">支持文字水印与图片水印，可设置透明度、位置与旋转角度</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 图片修改 ===================== -->
+  <section id="page-edit" class="page">
+    <div class="two-col">
+      <div class="panel">
+        <div class="section-title">1. 选择图片</div>
+        <div class="upload-zone" id="ed-upload">
+          <div class="up-icon">🖼️</div>
+          <div class="up-main">点击上传图片</div>
+          <div class="up-sub">或拖拽图片到此处</div>
+        </div>
+        <input type="file" id="ed-file" accept="image/*" hidden>
+
+        <div class="section-title" style="margin-top:16px">2. 缩放</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>宽度 (px, 0=自动)</label>
+            <input type="number" id="ed-width" value="0" min="0">
+          </div>
+          <div class="form-group">
+            <label>高度 (px, 0=自动)</label>
+            <input type="number" id="ed-height" value="0" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>百分比缩放（0=不使用）</label>
+          <input type="number" id="ed-scale" value="0" min="0" max="500" step="5">
+        </div>
+
+        <div class="section-title" style="margin-top:16px">3. 旋转与裁剪</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>旋转角度</label>
+            <input type="number" id="ed-rotate" value="0" min="-360" max="360">
+          </div>
+          <div class="form-group">
+            <label>按比例裁剪</label>
+            <select id="ed-aspect">
+              <option value="">不裁剪</option>
+              <option value="1:1">1:1 正方形</option>
+              <option value="4:3">4:3</option>
+              <option value="3:4">3:4</option>
+              <option value="16:9">16:9</option>
+              <option value="9:16">9:16</option>
+              <option value="3:2">3:2</option>
+              <option value="21:9">21:9</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:16px">4. 滤镜调整</div>
+        <div class="check-row" style="margin-bottom:10px">
+          <label><input type="checkbox" id="ed-gray"> 灰度</label>
+          <label><input type="checkbox" id="ed-invert"> 反色</label>
+        </div>
+        <div class="form-group">
+          <label>亮度 <span class="range-val" id="ed-br-val">0</span></label>
+          <input type="range" id="ed-brightness" min="-100" max="100" value="0">
+        </div>
+        <div class="form-group">
+          <label>对比度 <span class="range-val" id="ed-co-val">0</span></label>
+          <input type="range" id="ed-contrast" min="-100" max="100" value="0">
+        </div>
+        <div class="form-group">
+          <label>饱和度 <span class="range-val" id="ed-sa-val">0</span></label>
+          <input type="range" id="ed-saturation" min="-100" max="100" value="0">
+        </div>
+
+        <div class="section-title" style="margin-top:16px">5. 输出</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>格式</label>
+            <select id="ed-format">
+              <option value="jpg" selected>JPG</option>
+              <option value="png">PNG</option>
+              <option value="bmp">BMP</option>
+              <option value="gif">GIF</option>
+              <option value="tiff">TIFF</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>JPG 质量</label>
+            <input type="number" id="ed-quality" value="90" min="10" max="100">
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button class="btn primary" id="ed-run">应用修改</button>
+          <button class="btn" id="ed-download" style="display:none">下载</button>
+        </div>
+        <div class="error-msg" id="ed-error"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">预览</div>
+        <div class="result-box show" id="ed-result">
+          <div class="loading" id="ed-loading" style="display:none">
+            <div class="spinner"></div>
+            正在处理图片...
+          </div>
+          <img id="ed-result-img" alt="修改预览" style="display:none">
+          <div class="canvas-hint" id="ed-empty-hint">
+            <div class="hint-main">上传图片并调整参数，点击「应用修改」</div>
+            <div class="hint-sub">支持缩放、旋转、比例裁剪、灰度/反色、亮度对比度饱和度调整</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 拼图拆分 ===================== -->
+  <section id="page-collage" class="page active">
+    <div class="split-page active">
+
+      <!-- 左侧 -->
+      <div class="panel panel-left">
+        <div>
+          <div class="section-title">预设模板</div>
+          <div class="tpl-dropdown" id="tpl-dropdown">
+            <button class="tpl-btn" id="tpl-btn">
+              <span id="tpl-selected">--- 请选择模板 ---</span>
+              <span class="arrow">▼</span>
+            </button>
+            <div class="tpl-menu" id="tpl-menu"></div>
+          </div>
+          <div class="free-params" id="free-collage-params">
+            <span>行</span><input type="number" id="free-rows" value="2" min="1" max="7">
+            <span>列</span><input type="number" id="free-cols" value="2" min="1" max="7">
+          </div>
+          <div class="free-params" id="free-split-params">
+            <span>行</span><input type="number" id="free-split-rows" value="2" min="1" max="10">
+            <span>列</span><input type="number" id="free-split-cols" value="2" min="1" max="10">
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title">素材库</div>
+          <div class="library" id="library-zone">
+            <div class="up-icon">📁</div>
+            <div class="up-main">点击上传图片</div>
+            <div class="up-sub">或拖拽图片到此处</div>
+            <div class="tip">上传后可将图片拖入右侧模板格子</div>
+          </div>
+          <input type="file" id="lib-file" accept="image/*" multiple hidden>
+          <div class="lib-items" id="lib-items"></div>
+        </div>
+      </div>
+
+      <!-- 右侧画布 -->
+      <div class="panel panel-right">
+        <div class="canvas-head">
+          <div class="title">
+            <span id="canvas-mode-name">拼图模式</span>
+            <span class="badge" id="canvas-mode-badge">未选择模板</span>
+          </div>
+          <div class="canvas-actions">
+            <button class="btn" id="auto-fill" disabled>自动填充</button>
+            <button class="btn" id="clear-canvas">清空画布</button>
+          </div>
+        </div>
+
+        <div class="canvas-body" id="canvas-body">
+          <div class="canvas-hint" id="canvas-hint">
+            <div class="hint-main">请先选择模板，再将素材库图片拖入模板格子中</div>
+            <div class="hint-sub">自由拼图最多支持 7×7 布局<br>自由分图最多支持 10×10 布局</div>
+          </div>
+          <div class="grid-wrap" id="grid-wrap" style="display:none"></div>
+          <div class="split-drop" id="split-drop" style="display:none">
+            <div class="up-icon">🖼️</div>
+            <div class="up-main">点击上传要拆分的图片</div>
+            <div class="up-sub">或拖拽图片到此处</div>
+            <div class="tip">将按所选分图模板均分为 N 张，打包 zip 下载</div>
+          </div>
+          <div class="split-preview" id="split-preview">
+            <img id="split-preview-img" alt="待拆分图片">
+            <div class="split-grid-overlay" id="split-overlay"></div>
+          </div>
+          <input type="file" id="split-file" accept="image/*" hidden>
+        </div>
+
+        <div class="canvas-settings">
+          <label>间距 <input type="number" id="cfg-gap" value="10" min="0" max="100"></label>
+          <label>背景 <input type="color" id="cfg-bg" value="#ffffff"></label>
+          <label>格式
+            <select id="cfg-format">
+              <option value="jpg" selected>JPG</option>
+              <option value="png">PNG</option>
+            </select>
+          </label>
+          <label>质量 <input type="number" id="cfg-quality" value="90" min="10" max="100"></label>
+          <button class="btn primary" id="run-collage">生成拼图</button>
+          <button class="btn primary" id="run-split" style="display:none">开始分图</button>
+        </div>
+
+        <!-- 格子图片调整工具栏 -->
+        <div class="cell-edit" id="cell-edit" style="display:none">
+          <span class="ce-title">格子 <b id="ce-idx">1</b> 图片调整</span>
+          <label>缩放 <input type="range" id="ce-zoom" min="50" max="500" value="100"><em id="ce-zoom-val">100%</em></label>
+          <label>水平 <input type="range" id="ce-dx" min="-100" max="100" value="0"><em id="ce-dx-val">0</em></label>
+          <label>垂直 <input type="range" id="ce-dy" min="-100" max="100" value="0"><em id="ce-dy-val">0</em></label>
+          <button class="btn" id="ce-reset">重置</button>
+          <span class="ce-tip">也可在格子上直接拖动图片、滚动滚轮缩放</span>
+        </div>
+
+        <div class="result-box" id="collage-result">
+          <div class="result-head">
+            <span class="section-title" style="margin:0">处理结果</span>
+            <button class="btn" id="collage-close" style="display:none">✕ 关闭</button>
+          </div>
+          <div class="loading" id="collage-loading" style="display:none">
+            <div class="spinner"></div>
+            正在生成，请稍候...
+          </div>
+          <div class="result-body" id="collage-result-body" style="display:none">
+            <img id="collage-result-img" alt="结果">
+            <div class="result-meta" id="collage-result-meta"></div>
+            <div class="result-actions">
+              <button class="btn primary" id="collage-download">⬇ 下载结果</button>
+            </div>
+          </div>
+          <div class="error-msg" id="collage-error"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 关于应用 ===================== -->
+  <section id="page-about" class="page">
+    <div class="panel about-card">
+      <div class="about-head">
+        <div class="about-logo">图</div>
+        <div>
+          <h1>图片工具</h1>
+          <div class="ver">版本 0.0.1</div>
+        </div>
+      </div>
+      <table class="about-table">
+        <tr><td>应用名称</td><td>图片工具 (Image Tool)</td></tr>
+        <tr><td>版本</td><td>0.0.2</td></tr>
+        <tr><td>开发者 / 发布者</td><td>suytool</td></tr>
+        <tr><td>服务端口</td><td>3434</td></tr>
+        <tr><td>运行环境</td><td>飞牛 fnOS（Go 编写，单二进制运行）</td></tr>
+        <tr><td>技术栈</td><td>Go / net/http / imaging / 思源黑体</td></tr>
+      </table>
+      <div class="section-title" style="margin-top:16px">功能特性</div>
+      <div class="feature-list">
+        <div class="feature-item"><span class="fi-icon">🧩</span>拼图：经典九宫格 / 2~9 图模板 / 自由拼图 (7×7)</div>
+        <div class="feature-item"><span class="fi-icon">🎯</span>格子微调：拼图格内图片支持缩放 / 拖动位置</div>
+        <div class="feature-item"><span class="fi-icon">✂️</span>分图：1拆9 / 1拆6 / 1拆4 / 自由分图 (10×10)</div>
+        <div class="feature-item"><span class="fi-icon">💧</span>水印：文字 + 图片水印，透明度/位置/旋转可调</div>
+        <div class="feature-item"><span class="fi-icon">🎨</span>修改：缩放 / 旋转 / 裁剪 / 滤镜 / 格式转换</div>
+      </div>
+      <div class="about-footer">
+        本应用为第三方应用，图片处理均在本地 NAS 完成，不会上传到任何外部服务器。<br>
+        素材库与处理结果仅保存在浏览器会话中，刷新页面后自动清空。<br><br>
+        如果觉得好用，欢迎点击右上角「❤ 支持作者」扫码鼓励一下，感谢！❤
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

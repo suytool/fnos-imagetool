@@ -1,0 +1,5 @@
+#!/bin/bash
+
+### upgrade_init - 图片工具生命周期钩子
+
+exit 0

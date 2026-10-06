@@ -1,0 +1,12 @@
+{
+  "data-share": {
+    "shares": [
+      {
+        "name": "com.imagetool.app"
+      },
+      {
+        "name": "com.imagetool.app/data"
+      }
+    ]
+  }
+}
