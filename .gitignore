@@ -1,0 +1,10 @@
+# 编译产物
+imagetool-src/imagetool
+imagetool-src/imagetool-amd64
+imagetool-src/imagetool-arm64
+imagetool-app/app/server/imagetool
+*.fpk
+
+# 日志与临时文件
+*.log
+.DS_Store

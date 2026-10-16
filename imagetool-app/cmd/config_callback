@@ -1,0 +1,5 @@
+#!/bin/bash
+
+### config_callback - 图片工具生命周期钩子
+
+exit 0
